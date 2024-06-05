@@ -11,10 +11,6 @@ public class PoolObject : MonoBehaviour
 		Debug.Log("PoolObject Awake");
 	}
 
-	protected void Done(float time)
-	{
-		Invoke("Done", time);
-	}
 
 	protected void Done()
 	{

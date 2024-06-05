@@ -4,7 +4,13 @@ using UnityEngine;
 using System;
 public static class EventManager 
 {
+    #region Grid & Cell
+
     public static Action<int> OnGridCreate;
+    public static Action<int> OnGridReset;
+    public static Action<Vector2Int> OnMatchCheck;
+
+    #endregion
 
     #region Object Pool Events
     public static Action<string, GameObject, int> OnPoolSpawn;
@@ -17,6 +23,8 @@ public static class EventManager
         return OnGetPoolObject?.Invoke(text, transform, Quaternion);
     }
     #endregion
+
+
 
 
 }

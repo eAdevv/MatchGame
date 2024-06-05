@@ -5,28 +5,34 @@ using TMPro;
 public class CellActivity : MonoBehaviour, IClickable
 {
     public bool isMarked { get; private set; }
-
-    private GameObject Mark;
-
-    private void Start()
-    {
-        Mark = transform.GetChild(0).gameObject;
-    }
+    public int neighbourCount;
+    public GameObject Mark;
 
     public void Click()
     {
-        MarkCell();
+        if (!isMarked) MarkCell();
     }
 
     private void MarkCell()
     {
         isMarked = true;
         Mark.SetActive(true);
+
+        // Isaretledigimiz hucrenin Griddeki pozisyonunu bul ve Listede tut.
+        Vector2Int MarkedPosition = new Vector2Int((int)gameObject.transform.position.x, (int)gameObject.transform.position.y);
+        GridManager.Instance.MarkPositions.Add(MarkedPosition);
+
+
+        // Marklanan hücre icin tarama yap.
+        EventManager.OnMatchCheck?.Invoke(MarkedPosition);
     }
 
-    private void UnMarkCell()
+    public void UnMarkCell()
     {
         isMarked = false;
         Mark.SetActive(false);
+        neighbourCount = 0;
+
     }
+
 }

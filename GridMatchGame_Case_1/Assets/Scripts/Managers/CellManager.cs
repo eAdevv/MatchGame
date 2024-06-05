@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CellManager : MonoBehaviour
+public class CellManager : MonoSingleton<CellManager>
 {
     private Camera mainCamera;
     void Start()
@@ -20,8 +20,14 @@ public class CellManager : MonoBehaviour
             {
                 IClickable clickable = hit.collider.GetComponent<IClickable>();
 
-                if (clickable != null) clickable.Click();
+                if (clickable != null)
+                {
+                     clickable.Click();
+
+                }
             }
         }
     }
+
+
 }

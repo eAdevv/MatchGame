@@ -20,12 +20,11 @@ public class ButtonClickHandler : MonoBehaviour
     {
         if (InputSizeField != null)
         {
-            string inputText = InputSizeField.text; // Field'dan girilen deðeri alýr.
+            string inputText = InputSizeField.text; // Field'dan girilen degeri al.
 
-            if (int.TryParse(inputText, out int number)) // Girilen deðeri integer'a çevir ve Gridi Rebuild et.
+            if (int.TryParse(inputText, out int number)) // Girilen degeri integer'a çevir ve Gridi Rebuild et.
             {
-                EventManager.OnPoolClear();
-                EventManager.OnGridCreate?.Invoke(number);
+                EventManager.OnGridReset?.Invoke(number);
             }
             else
             {
