@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CellManager : MonoSingleton<CellManager>
+public class CellManager : MonoBehaviour
 {
     private Camera mainCamera;
     void Start()

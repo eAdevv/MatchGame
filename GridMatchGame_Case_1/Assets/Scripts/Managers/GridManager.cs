@@ -2,21 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Zenject;
 
 public class GridManager : MonoSingleton<GridManager>
-{
-    private const float cameraPositionOffset = 0.5f;
-    private const float cameraSizeOffsetMultiplier = 1.2f;
-
-    [SerializeField] private int Size;
+{ 
+    [SerializeField] private int _Size;
     [SerializeField] private GameObject Cell;
-
-    private List<Vector2Int> _MarkPositions = new List<Vector2Int>();
-    public List<Vector2Int> MarkPositions => _MarkPositions;
-
-    private int matchCount;
     private GameObject[,] Grid;
-    private Camera myCamera;
+    private List<Vector2Int> _markPositions = new List<Vector2Int>();
+    private CameraManager _cameraManager;
+    public int Size
+    {
+        get => _Size;
+        set => _Size = value;
+    }
+    public List<Vector2Int> MarkPositions
+    {
+        get => _markPositions;
+        set => _markPositions = value;
+    }
 
     private Vector2Int[] directions = new Vector2Int[]
     {
@@ -40,11 +44,17 @@ public class GridManager : MonoSingleton<GridManager>
         EventManager.OnMatchCheck -= CheckMatch;
     }
 
+    [Inject]
+    public void OnInstaller(CameraManager cameraManager)
+    {
+        _cameraManager = cameraManager;
+    }
     private void Start()
     {
-        myCamera = Camera.main;
         GridCreator(Size);
     }
+
+
 
     #region Grid Create & Reset
     private void GridCreator(int gridSize) 
@@ -67,7 +77,7 @@ public class GridManager : MonoSingleton<GridManager>
             }
         }
 
-        CameraCenter(gridSize);
+        _cameraManager.CameraSetSize(Size);
     }
 
     
@@ -101,17 +111,15 @@ public class GridManager : MonoSingleton<GridManager>
             var DirectionPoint = startPos - directions[i];
             if (MarkPositions.Contains(DirectionPoint) && Grid[DirectionPoint.x, DirectionPoint.y] != null) // Eger komsu bulunursa hücre ve komsusunun komsu sayacýný arttir.
             {
-                Grid[startPos.x, startPos.y].GetComponent<CellActivity>().neighbourCount++; 
+                Grid[startPos.x, startPos.y].GetComponent<CellActivity>().NeighbourCount++;
 
                 var NeighBourPosition = startPos - directions[i];
-                Grid[NeighBourPosition.x, NeighBourPosition.y].GetComponent<CellActivity>().neighbourCount++;
+                Grid[NeighBourPosition.x, NeighBourPosition.y].GetComponent<CellActivity>().NeighbourCount++;
 
             }
         }
-
         FindCellsDelete(); // Bu fonksiyon ilk once 2 komsusu olan hucreleri bulup etrafindaki sadece o hücreye komsu olan hucreyi kapatir.
                            // Daha sonra 2 komsulu hucreleri kapatir.
-
     }
 
     private void FindCellsDelete()
@@ -120,39 +128,34 @@ public class GridManager : MonoSingleton<GridManager>
         {
             var GridCellObject = Grid[MarkPositions[i].x, MarkPositions[i].y]; // Isaretlenen objenin griddeki yeri
             var CellObjectPosition = new Vector2Int((int)GridCellObject.transform.position.x, (int)GridCellObject.transform.position.y); // Isaretlenen objenin griddeki yeri
+            CheckNeighbour(GridCellObject,CellObjectPosition);
+        } 
+    }
 
-            if (GridCellObject.GetComponent<CellActivity>().neighbourCount >= 2) // Komsu sayisi 2 veya daha fazla olan hücreleri kontrole et
+    private void CheckNeighbour(GameObject CellObject , Vector2Int ObjectPosition)
+    {
+        
+
+        if (CellObject.GetComponent<CellActivity>().NeighbourCount >= 2) // Komsu sayisi 2 veya daha fazla olan hücreleri kontrole et
+        {
+            foreach (var myDirection in directions)
             {
-                // 4 Yönde tarama yapýp tek komsusu olan hücreleri bul ve cikar
-                for (int x = 0; x < directions.Length; x++)
+                var DirectionPoint = ObjectPosition - myDirection;
+                if (MarkPositions.Contains(DirectionPoint) && Grid[DirectionPoint.x, DirectionPoint.y].GetComponent<CellActivity>().NeighbourCount == 1)
                 {
-                    var DirectionPoint = CellObjectPosition - directions[x];
-                    if (MarkPositions.Contains(DirectionPoint) && Grid[DirectionPoint.x,DirectionPoint.y].GetComponent<CellActivity>().neighbourCount == 1)
-                    {
-                        MarkPositions.Remove(DirectionPoint);
-                        Grid[DirectionPoint.x, DirectionPoint.y].GetComponent<CellActivity>().UnMarkCell();
-                    }
+                    MarkPositions.Remove(DirectionPoint);
+                    Grid[DirectionPoint.x, DirectionPoint.y].GetComponent<CellActivity>().UnMarkCell();
                 }
-                // Kalan 2 komsulu veya daha fazla olan hücre veya hücreleri cikar.
-                MarkPositions.Remove(CellObjectPosition);
-                GridCellObject.GetComponent<CellActivity>().UnMarkCell();
             }
+            // Kalan 2 komsulu veya daha fazla olan hücre veya hücreleri cikar.
+            MarkPositions.Remove(ObjectPosition);
+            CellObject.GetComponent<CellActivity>().UnMarkCell();
         }
     }
 
     #endregion
 
-    #region Camera
-    private void CameraCenter(int _size) // Kamera Ayarý 
-    {
-        myCamera.orthographicSize = _size * cameraSizeOffsetMultiplier;
-
-        float gridWidth = _size;
-        float gridHeight = _size;
-        Vector2 centerPosition = new Vector2(gridWidth / 2 - cameraPositionOffset , gridHeight / 2 - cameraPositionOffset);
-        myCamera.transform.position = centerPosition;
-    }
-    #endregion
+   
 
 
 }

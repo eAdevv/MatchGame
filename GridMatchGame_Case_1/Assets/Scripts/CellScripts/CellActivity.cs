@@ -2,12 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Zenject;
 public class CellActivity : MonoBehaviour, IClickable
 {
-    public bool isMarked { get; private set; }
-    public int neighbourCount;
+    private bool isMarked;
+    private int neighbourCount;
+    private GridManager _gridManager;
+
     public GameObject Mark;
 
+
+    public int NeighbourCount
+    {
+        get => neighbourCount;
+        set => neighbourCount = value;
+    }
+
+  
     public void Click()
     {
         if (!isMarked) MarkCell();
@@ -21,7 +32,6 @@ public class CellActivity : MonoBehaviour, IClickable
         // Isaretledigimiz hucrenin Griddeki pozisyonunu bul ve Listede tut.
         Vector2Int MarkedPosition = new Vector2Int((int)gameObject.transform.position.x, (int)gameObject.transform.position.y);
         GridManager.Instance.MarkPositions.Add(MarkedPosition);
-
 
         // Marklanan hücre icin tarama yap.
         EventManager.OnMatchCheck?.Invoke(MarkedPosition);

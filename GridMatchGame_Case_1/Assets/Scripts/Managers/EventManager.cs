@@ -13,6 +13,7 @@ public static class EventManager
     #endregion
 
     #region Object Pool Events
+
     public static Action<string, GameObject, int> OnPoolSpawn;
     public static Action OnPoolClear;
     public delegate GameObject GameObjectEventHandler(string text, Vector3 transform, Quaternion Quaternion);
@@ -23,8 +24,4 @@ public static class EventManager
         return OnGetPoolObject?.Invoke(text, transform, Quaternion);
     }
     #endregion
-
-
-
-
 }
