@@ -76,7 +76,6 @@ public class GridManager : MonoSingleton<GridManager>
 
             }
         }
-
         _cameraManager.CameraSetSize(Size);
     }
 
@@ -121,35 +120,33 @@ public class GridManager : MonoSingleton<GridManager>
         FindCellsDelete(); // Bu fonksiyon ilk once 2 komsusu olan hucreleri bulup etrafindaki sadece o hücreye komsu olan hucreyi kapatir.
                            // Daha sonra 2 komsulu hucreleri kapatir.
     }
-
     private void FindCellsDelete()
     {
         for (int i = 0; i < MarkPositions.Count; i++)
         {
-            var GridCellObject = Grid[MarkPositions[i].x, MarkPositions[i].y]; // Isaretlenen objenin griddeki yeri
+            var GridCellObject = Grid[MarkPositions[i].x, MarkPositions[i].y]; // Isaretlenen obje
             var CellObjectPosition = new Vector2Int((int)GridCellObject.transform.position.x, (int)GridCellObject.transform.position.y); // Isaretlenen objenin griddeki yeri
             CheckNeighbour(GridCellObject,CellObjectPosition);
         } 
     }
 
-    private void CheckNeighbour(GameObject CellObject , Vector2Int ObjectPosition)
+    private void CheckNeighbour(GameObject Cell , Vector2Int CellPosition)
     {
-        
-
-        if (CellObject.GetComponent<CellActivity>().NeighbourCount >= 2) // Komsu sayisi 2 veya daha fazla olan hücreleri kontrole et
+        if (Cell.GetComponent<CellActivity>().NeighbourCount >= 2) // Komsu sayisi 2 veya daha fazla olan hücreleri kontrole et
         {
             foreach (var myDirection in directions)
             {
-                var DirectionPoint = ObjectPosition - myDirection;
-                if (MarkPositions.Contains(DirectionPoint) && Grid[DirectionPoint.x, DirectionPoint.y].GetComponent<CellActivity>().NeighbourCount == 1)
+                var NeighbourDirectionPoint = CellPosition - myDirection;
+                if (MarkPositions.Contains(NeighbourDirectionPoint) && Grid[NeighbourDirectionPoint.x, NeighbourDirectionPoint.y].GetComponent<CellActivity>().NeighbourCount == 1)
                 {
-                    MarkPositions.Remove(DirectionPoint);
-                    Grid[DirectionPoint.x, DirectionPoint.y].GetComponent<CellActivity>().UnMarkCell();
+                    MarkPositions.Remove(NeighbourDirectionPoint);
+                    Grid[NeighbourDirectionPoint.x, NeighbourDirectionPoint.y].GetComponent<CellActivity>().UnMarkCell();
                 }
+
             }
             // Kalan 2 komsulu veya daha fazla olan hücre veya hücreleri cikar.
-            MarkPositions.Remove(ObjectPosition);
-            CellObject.GetComponent<CellActivity>().UnMarkCell();
+            MarkPositions.Remove(CellPosition);
+            Cell.GetComponent<CellActivity>().UnMarkCell();
         }
     }
 

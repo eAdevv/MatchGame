@@ -14,6 +14,8 @@ public class ButtonClickHandler : MonoBehaviour
 
         if(myButton != null)
             myButton.onClick.AddListener(OnRebuildButtonClick); // Button click
+
+        InputSizeField.text = GridManager.Instance.Size.ToString();
     }
 
     void OnRebuildButtonClick()

@@ -7,10 +7,9 @@ public class CellActivity : MonoBehaviour, IClickable
 {
     private bool isMarked;
     private int neighbourCount;
-    private GridManager _gridManager;
-
+    private Color OriginalColor;
     public GameObject Mark;
-
+    public SpriteRenderer Square;
 
     public int NeighbourCount
     {
@@ -18,7 +17,11 @@ public class CellActivity : MonoBehaviour, IClickable
         set => neighbourCount = value;
     }
 
-  
+    private void Awake()
+    {
+        OriginalColor = Square.color;
+    }
+
     public void Click()
     {
         if (!isMarked) MarkCell();
@@ -28,7 +31,7 @@ public class CellActivity : MonoBehaviour, IClickable
     {
         isMarked = true;
         Mark.SetActive(true);
-
+        Square.color = new Color(OriginalColor.r,OriginalColor.g,OriginalColor.b,OriginalColor.a / 2);
         // Isaretledigimiz hucrenin Griddeki pozisyonunu bul ve Listede tut.
         Vector2Int MarkedPosition = new Vector2Int((int)gameObject.transform.position.x, (int)gameObject.transform.position.y);
         GridManager.Instance.MarkPositions.Add(MarkedPosition);
@@ -42,6 +45,7 @@ public class CellActivity : MonoBehaviour, IClickable
         isMarked = false;
         Mark.SetActive(false);
         neighbourCount = 0;
+        Square.color = new Color(OriginalColor.r, OriginalColor.g, OriginalColor.b, OriginalColor.a);
 
     }
 

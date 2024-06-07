@@ -19,9 +19,13 @@ public static class EventManager
     public delegate GameObject GameObjectEventHandler(string text, Vector3 transform, Quaternion Quaternion);
     public static event GameObjectEventHandler OnGetPoolObject;
 
+
     public static GameObject InvokeOnGetPoolObject(string text, Vector3 transform, Quaternion Quaternion)
     {
         return OnGetPoolObject?.Invoke(text, transform, Quaternion);
     }
     #endregion
+
+
+   
 }

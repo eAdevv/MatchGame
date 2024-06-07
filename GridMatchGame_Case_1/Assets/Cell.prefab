@@ -422,8 +422,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 917c08ba82663d142a32b89a8f56bbbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  neighbourCount: 0
   Mark: {fileID: 4072957745544910189}
+  Square: {fileID: 4277823329704386633}
 --- !u!61 &7992635502198479346
 BoxCollider2D:
   m_ObjectHideFlags: 0
